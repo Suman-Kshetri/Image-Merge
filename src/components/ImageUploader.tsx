@@ -12,7 +12,6 @@ const ImageUploader: React.FC = () => {
   const baseImageRef = useRef<HTMLImageElement | null>(null);
   const overlayImageRef = useRef<HTMLImageElement | null>(null);
 
-  // Handle base image upload, no size limit
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -31,7 +30,6 @@ const ImageUploader: React.FC = () => {
     }
   };
 
-  // Handle overlay image upload
   const handleOverlayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -43,23 +41,19 @@ const ImageUploader: React.FC = () => {
     }
   };
 
-  // When crop is complete, store pixel crop area
   const handleCropComplete = (croppedAreaPixels: PixelCrop) => {
     setCroppedArea(croppedAreaPixels);
   };
 
-  // Store base image natural size and ref on load
   const handleBaseImageLoaded = (img: HTMLImageElement) => {
     baseImageRef.current = img;
     setBaseImageNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
   };
 
-  // Store overlay image ref on load
   const handleOverlayImageLoaded = (img: HTMLImageElement) => {
     overlayImageRef.current = img;
   };
 
-  // Generate merged image by drawing both images on canvas
   const generateMergedImage = () => {
     if (!baseImageRef.current || !overlayImageRef.current || !croppedArea || !baseImageNaturalSize) {
       alert('Please select base image, overlay image, and crop area first.');
@@ -75,10 +69,10 @@ const ImageUploader: React.FC = () => {
       return;
     }
 
-    // Draw base image at full natural size
+    // Draw base image
     ctx.drawImage(baseImageRef.current, 0, 0, canvas.width, canvas.height);
 
-    // Draw overlay image in the cropped area exactly
+    // Draw overlay image on cropped area
     ctx.drawImage(
       overlayImageRef.current,
       croppedArea.x,
@@ -89,6 +83,17 @@ const ImageUploader: React.FC = () => {
 
     const mergedDataUrl = canvas.toDataURL('image/png');
     setMergedImageUrl(mergedDataUrl);
+  };
+
+  const downloadMergedImage = () => {
+    if (!mergedImageUrl) return;
+
+    const link = document.createElement('a');
+    link.href = mergedImageUrl;
+    link.download = 'merged-image.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -137,18 +142,18 @@ const ImageUploader: React.FC = () => {
         </>
       )}
 
-      {/* Invisible overlay image for natural size ref */}
+      {/* Invisible overlay image */}
       {overlayUrl && (
         <img
           src={overlayUrl}
-          alt="Overlay for size"
+          alt="Overlay"
           ref={overlayImageRef}
           style={{ display: 'none' }}
           onLoad={(e) => handleOverlayImageLoaded(e.currentTarget)}
         />
       )}
 
-      {/* Generate merged image button */}
+      {/* Generate merged image */}
       {overlayUrl && croppedArea && (
         <button
           onClick={generateMergedImage}
@@ -158,21 +163,27 @@ const ImageUploader: React.FC = () => {
         </button>
       )}
 
-      {/* Show merged image at natural size, scrollable container */}
+      {/* Show merged image and download button */}
       {mergedImageUrl && (
-        <div
-          className="mt-6 border border-gray-400 p-2"
-          style={{ overflow: 'auto' }}
-        >
-          <img
-            src={mergedImageUrl}
-            alt="Merged result"
-            style={{
-              width: baseImageNaturalSize?.width ?? 'auto',
-              height: baseImageNaturalSize?.height ?? 'auto',
-            }}
-          />
-        </div>
+        <>
+          <div className="mt-6 border border-gray-400 p-2" style={{ overflow: 'auto' }}>
+            <img
+              src={mergedImageUrl}
+              alt="Merged result"
+              style={{
+                width: baseImageNaturalSize?.width ?? 'auto',
+                height: baseImageNaturalSize?.height ?? 'auto',
+              }}
+            />
+          </div>
+
+          <button
+            onClick={downloadMergedImage}
+            className="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+          >
+            Download Merged Image
+          </button>
+        </>
       )}
     </div>
   );

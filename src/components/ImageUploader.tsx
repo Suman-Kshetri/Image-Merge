@@ -1,5 +1,9 @@
 import React, { useState, useRef } from 'react';
 import ImageCropper from './ImageCropper';
+import BaseImageUpload from './BaseImageUpload';
+import OverlayImageUpload from './OverlayImageUpload';
+import GenerateButton from './GenerateButton';
+import MergedImagePreview from './MergedImagePreview';
 import type { PixelCrop } from 'react-image-crop';
 
 const ImageUploader: React.FC = () => {
@@ -12,33 +16,19 @@ const ImageUploader: React.FC = () => {
   const baseImageRef = useRef<HTMLImageElement | null>(null);
   const overlayImageRef = useRef<HTMLImageElement | null>(null);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const img = new Image();
-        img.onload = () => {
-          setImageUrl(reader.result as string);
-          setMergedImageUrl(null);
-          setCroppedArea(null);
-          setBaseImageNaturalSize(null);
-        };
-        img.src = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleBaseImageUpload = (url: string) => {
+    const img = new Image();
+    img.onload = () => {
+      setImageUrl(url);
+      setMergedImageUrl(null);
+      setCroppedArea(null);
+      setBaseImageNaturalSize(null);
+    };
+    img.src = url;
   };
 
-  const handleOverlayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setOverlayUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleOverlayUpload = (url: string) => {
+    setOverlayUrl(url);
   };
 
   const handleCropComplete = (croppedAreaPixels: PixelCrop) => {
@@ -47,7 +37,10 @@ const ImageUploader: React.FC = () => {
 
   const handleBaseImageLoaded = (img: HTMLImageElement) => {
     baseImageRef.current = img;
-    setBaseImageNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
+    setBaseImageNaturalSize({
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    });
   };
 
   const handleOverlayImageLoaded = (img: HTMLImageElement) => {
@@ -64,6 +57,7 @@ const ImageUploader: React.FC = () => {
     canvas.width = baseImageNaturalSize.width;
     canvas.height = baseImageNaturalSize.height;
     const ctx = canvas.getContext('2d');
+
     if (!ctx) {
       alert('Failed to get canvas context');
       return;
@@ -72,7 +66,7 @@ const ImageUploader: React.FC = () => {
     // Draw base image
     ctx.drawImage(baseImageRef.current, 0, 0, canvas.width, canvas.height);
 
-    // Draw overlay image on cropped area
+    // Draw overlay image at cropped area
     ctx.drawImage(
       overlayImageRef.current,
       croppedArea.x,
@@ -98,20 +92,8 @@ const ImageUploader: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-10 space-y-6 px-4 max-w-[1300px] mx-auto">
-      {/* Upload base image */}
-      <label
-        htmlFor="upload-input"
-        className="cursor-pointer inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-      >
-        Browse Base Image
-      </label>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        id="upload-input"
-        className="hidden"
-      />
+      {/* Base Image Upload */}
+      <BaseImageUpload onUpload={handleBaseImageUpload} />
 
       {/* Cropper */}
       {imageUrl && (
@@ -123,26 +105,12 @@ const ImageUploader: React.FC = () => {
         />
       )}
 
-      {/* Upload overlay image */}
+      {/* Overlay Image Upload */}
       {croppedArea && (
-        <>
-          <label
-            htmlFor="overlay-input"
-            className="cursor-pointer inline-block px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-300"
-          >
-            Upload Overlay Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleOverlayChange}
-            id="overlay-input"
-            className="hidden"
-          />
-        </>
+        <OverlayImageUpload onUpload={handleOverlayUpload} />
       )}
 
-      {/* Invisible overlay image */}
+      {/* Hidden Overlay Image */}
       {overlayUrl && (
         <img
           src={overlayUrl}
@@ -153,37 +121,19 @@ const ImageUploader: React.FC = () => {
         />
       )}
 
-      {/* Generate merged image */}
+      {/* Generate Button */}
       {overlayUrl && croppedArea && (
-        <button
-          onClick={generateMergedImage}
-          className="cursor-pointer px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition duration-300"
-        >
-          Generate Merged Image
-        </button>
+        <GenerateButton onClick={generateMergedImage} />
       )}
 
-      {/* Show merged image and download button */}
-      {mergedImageUrl && (
-        <>
-          <div className="mt-6 border border-gray-400 p-2" style={{ overflow: 'auto' }}>
-            <img
-              src={mergedImageUrl}
-              alt="Merged result"
-              style={{
-                width: baseImageNaturalSize?.width ?? 'auto',
-                height: baseImageNaturalSize?.height ?? 'auto',
-              }}
-            />
-          </div>
-
-          <button
-            onClick={downloadMergedImage}
-            className="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
-          >
-            Download Merged Image
-          </button>
-        </>
+      {/* Merged Image Preview + Download */}
+      {mergedImageUrl && baseImageNaturalSize && (
+        <MergedImagePreview
+          url={mergedImageUrl}
+          width={baseImageNaturalSize.width}
+          height={baseImageNaturalSize.height}
+          onDownload={downloadMergedImage}
+        />
       )}
     </div>
   );

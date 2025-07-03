@@ -1,9 +1,10 @@
-type Props = {
+interface Props {
   onUpload: (url: string) => void;
 };
 
 const BaseImageUpload = ({ onUpload }: Props) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Event: ", e);
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -28,7 +29,7 @@ const BaseImageUpload = ({ onUpload }: Props) => {
         className="hidden"
       />
     </>
-  );
+  );2
 };
 
 export default BaseImageUpload;

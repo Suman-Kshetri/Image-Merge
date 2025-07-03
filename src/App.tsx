@@ -1,16 +1,33 @@
-import ImageUploader from './components/ImageUploader'
-import './index.css'
+import "./index.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./pages/Home";
+import ImageUploader from "./components/ImageUploader";
+// import QrGenerator from "./components/QrGenerator";
+import ToolLayout from "./pages/ToolLayout";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />, // Home page with no nav bar
+  },
+  {
+    path: "/",
+    element: <ToolLayout />, // Layout with nav bar
+    children: [
+      {
+        path: "merge-image",
+        element: <ImageUploader />,
+      },
+      {
+        path: "qr-generator",
+        // element: <QrGenerator />,
+      },
+    ],
+  },
+]);
 
 function App() {
-  return (
-   <>
-  <div className="dark min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center py-12 px-6">
-    <h1 className="text-4xl font-bold mb-1 select-none">Image Editor</h1>
-    <ImageUploader />
-  </div>
-</>
-
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;

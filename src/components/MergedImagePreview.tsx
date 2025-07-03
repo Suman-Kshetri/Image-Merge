@@ -12,7 +12,7 @@ const MergedImagePreview = ({ url, width, height, onDownload }: Props) => (
     </div>
     <button
       onClick={onDownload}
-      className="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
+      className="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold cursor-pointer rounded-lg shadow-md hover:bg-indigo-700 transition duration-300"
     >
       Download Merged Image
     </button>

@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply transition-colors duration-300;
+  }
+  .light {
+    --bg-main: #f3f4f6;
+    --text-main: #1f2937;
+    --card-bg: #ffffff;
+    --button-primary: #2563eb;
+    --button-secondary: #16a34a;
+    --nav-bg: rgba(55, 65, 81, 0.8);
+  }
+  .dark {
+    --bg-main: #1f2937;
+    --text-main: #f3f4f6;
+    --card-bg: #111827;
+    --button-primary: #3b82f6;
+    --button-secondary: #22c55e;
+    --nav-bg: rgba(17, 24, 39, 0.8);
+  }
+}
+
+.light, .dark {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

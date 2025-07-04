@@ -3,7 +3,7 @@ import React from "react";
 interface Props {
   onUpload: (url: string) => void;
   imageUrl?: string | null;
-  onRemove?: () => void; // optional, if you want remove functionality
+  onRemove?: () => void; // optional
 }
 
 const BaseImageUpload = ({ onUpload, imageUrl, onRemove }: Props) => {
@@ -19,13 +19,13 @@ const BaseImageUpload = ({ onUpload, imageUrl, onRemove }: Props) => {
   if (imageUrl) {
     // Show reupload button if image exists
     return (
-      <div className="flex flex-col items-center justify-center w-70 h-40 border-2 border-blue-400 rounded-lg bg-white p-4 shadow">
-        <p className="mb-2 text-blue-700 font-medium text-center">
+      <div className="flex flex-col items-center justify-center w-70 h-40 border-2 border-[var(--button-primary)] rounded-lg bg-[var(--card-bg)] p-4 shadow">
+        <p className="mb-2 text-[var(--button-primary)] font-medium text-center">
           Base Image Uploaded
         </p>
         <label
           htmlFor="base-upload"
-          className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          className="cursor-pointer px-4 py-2 bg-[var(--button-primary)] text-white rounded hover:brightness-110 transition"
         >
           Re-upload Base Image
         </label>
@@ -41,7 +41,7 @@ const BaseImageUpload = ({ onUpload, imageUrl, onRemove }: Props) => {
         {onRemove && (
           <button
             onClick={onRemove}
-            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            className="mt-2 px-4 py-2 bg-[var(--button-danger)] text-white rounded hover:brightness-110 transition"
           >
             Remove Image
           </button>
@@ -54,11 +54,11 @@ const BaseImageUpload = ({ onUpload, imageUrl, onRemove }: Props) => {
   return (
     <label
       htmlFor="base-upload"
-      className="cursor-pointer flex flex-col items-center justify-center w-70 h-40 border-2 border-dashed border-blue-400 rounded-lg bg-white hover:bg-blue-50 transition p-4 shadow"
+      className="cursor-pointer flex flex-col items-center justify-center w-70 h-40 border-2 border-dashed border-[var(--button-primary)] rounded-lg bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] transition p-4 shadow"
     >
       {/* Upload Icon */}
       <svg
-        className="w-10 h-10 text-blue-500 mb-2"
+        className="w-10 h-10 text-[var(--button-primary)] mb-2"
         fill="none"
         stroke="currentColor"
         strokeWidth={1.5}
@@ -71,7 +71,7 @@ const BaseImageUpload = ({ onUpload, imageUrl, onRemove }: Props) => {
         />
       </svg>
       {/* Text Label */}
-      <span className="text-sm text-blue-700 font-medium text-center">
+      <span className="text-sm text-[var(--button-primary)] font-medium text-center">
         Upload Base Image
       </span>
       <input

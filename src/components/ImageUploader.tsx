@@ -29,6 +29,7 @@ const ImageUploader: React.FC = () => {
     };
     img.src = url;
   };
+
   const handleRemoveImage = () => {
     setImageUrl(null);
   };
@@ -74,10 +75,7 @@ const ImageUploader: React.FC = () => {
       return;
     }
 
-    // Draw base image
     ctx.drawImage(baseImageRef.current, 0, 0, canvas.width, canvas.height);
-
-    // Draw overlay image at cropped area
     ctx.drawImage(
       overlayImageRef.current,
       croppedArea.x,
@@ -102,58 +100,55 @@ const ImageUploader: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-10 space-y-6 px-4 max-w-[1300px] mx-auto">
-      {/* Base Image Upload */}
-      <h1 className="text-3xl font-bold text-center">Image Merger</h1>
-      <BaseImageUpload
-        onUpload={handleBaseImageUpload}
-        imageUrl={imageUrl}
-        onRemove={handleRemoveImage}
-      />
+    <div className="min-h-screen w-full bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300">
+      <div className="flex flex-col items-center justify-center mt-10 space-y-6 px-4 max-w-[1300px] mx-auto">
+        <h1 className="text-3xl font-bold text-center">Image Merger</h1>
 
-      {/* Cropper */}
-      {imageUrl && (
-        <ImageCropper
+        <BaseImageUpload
+          onUpload={handleBaseImageUpload}
           imageUrl={imageUrl}
-          onCropChange={() => {}}
-          onCropComplete={handleCropComplete}
-          onImageLoaded={handleBaseImageLoaded}
+          onRemove={handleRemoveImage}
         />
-      )}
 
-      {/* Overlay Image Upload */}
-      {croppedArea && (
-        <OverlayImageUpload
-          onUpload={handleOverlayUpload}
-          imageUrl={overlayUrl}
-        />
-      )}
+        {imageUrl && (
+          <ImageCropper
+            imageUrl={imageUrl}
+            onCropChange={() => {}}
+            onCropComplete={handleCropComplete}
+            onImageLoaded={handleBaseImageLoaded}
+          />
+        )}
 
-      {/* Hidden Overlay Image */}
-      {overlayUrl && (
-        <img
-          src={overlayUrl}
-          alt="Overlay"
-          ref={overlayImageRef}
-          style={{ display: "none" }}
-          onLoad={(e) => handleOverlayImageLoaded(e.currentTarget)}
-        />
-      )}
+        {croppedArea && (
+          <OverlayImageUpload
+            onUpload={handleOverlayUpload}
+            imageUrl={overlayUrl}
+          />
+        )}
 
-      {/* Generate Button */}
-      {overlayUrl && croppedArea && (
-        <GenerateButton onClick={generateMergedImage} />
-      )}
+        {overlayUrl && (
+          <img
+            src={overlayUrl}
+            alt="Overlay"
+            ref={overlayImageRef}
+            style={{ display: "none" }}
+            onLoad={(e) => handleOverlayImageLoaded(e.currentTarget)}
+          />
+        )}
 
-      {/* Merged Image Preview + Download */}
-      {mergedImageUrl && baseImageNaturalSize && (
-        <MergedImagePreview
-          url={mergedImageUrl}
-          width={baseImageNaturalSize.width}
-          height={baseImageNaturalSize.height}
-          onDownload={downloadMergedImage}
-        />
-      )}
+        {overlayUrl && croppedArea && (
+          <GenerateButton onClick={generateMergedImage} />
+        )}
+
+        {mergedImageUrl && baseImageNaturalSize && (
+          <MergedImagePreview
+            url={mergedImageUrl}
+            width={baseImageNaturalSize.width}
+            height={baseImageNaturalSize.height}
+            onDownload={downloadMergedImage}
+          />
+        )}
+      </div>
     </div>
   );
 };

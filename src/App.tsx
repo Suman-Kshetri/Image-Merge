@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import ImageUploader from "./components/ImageUploader";
 // import QrGenerator from "./components/QrGenerator";
 import ToolLayout from "./pages/ToolLayout";
+import QrGenerator from "./components/QrGenerator";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: "qr-generator",
-        // element: <QrGenerator />,
+        element: <QrGenerator />,
       },
     ],
   },

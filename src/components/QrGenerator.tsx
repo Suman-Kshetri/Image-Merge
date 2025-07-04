@@ -1,68 +1,145 @@
 import React, { useState, useRef } from "react";
-import { QRCodeCanvas } from 'qrcode.react';
+import { QRCodeCanvas } from "qrcode.react";
 import { toPng } from "html-to-image";
 
-const QrGenerator = () => {
-  const [imageUrl, setImageUrl] = useState<string>("");
+// 🌐 Cloudinary API details from .env
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${
+  import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+}/upload`;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET!;
+
+const QrGenerator: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [inputUrl, setInputUrl] = useState<string>("");
+  const [qrValue, setQrValue] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
-  
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Url = reader.result as string;
-        setImageUrl(base64Url);
-      };
-      reader.readAsDataURL(file);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setInputUrl("");
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    try {
+      const res = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.secure_url) {
+        setQrValue(data.secure_url);
+      } else {
+        alert("Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-   const handleDownload = () => {
-    if (!qrRef.current) return;
-
-    toPng(qrRef.current)
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.download = "qr-code.png";
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.error("Failed to download QR code", err);
-      });
+  const handleLinkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputUrl(e.target.value);
   };
 
+  const generateQrFromLink = () => {
+    if (!inputUrl.trim()) {
+      alert("Please enter a valid URL or text.");
+      return;
+    }
+    setFile(null);
+    setQrValue(inputUrl.trim());
+  };
+
+  const handleDownloadQR = async () => {
+    if (!qrRef.current) return;
+
+    try {
+      const dataUrl = await toPng(qrRef.current);
+      const link = document.createElement("a");
+      link.download = "qr-code.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Download QR failed", err);
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center gap-6 p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold">QR Code from Image</h1>
+    <div className="min-h-screen p-6 bg-gray-100 flex flex-col items-center gap-6">
+      <h1 className="text-3xl font-bold text-center">QR Code Generator</h1>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
-                   file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 
-                   hover:file:bg-blue-100"
-      />
-
-      {imageUrl && (
-        <>
-          <img
-            src={imageUrl}
-            alt="Uploaded"
-            className="w-40 h-40 object-contain border rounded shadow"
+      {/* File Upload UI Card */}
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        className="cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-blue-400 bg-white rounded-xl p-6 w-80 shadow hover:bg-blue-50 transition"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12 text-blue-500 mb-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.5}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 15.75V19.5A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-3.75M16.5 10.5L12 6m0 0L7.5 10.5M12 6v12"
           />
+        </svg>
+        <span className="text-blue-700 font-semibold">Click to upload a file</span>
+        <span className="text-xs text-gray-500 mt-1">PNG, JPG, PDF, etc.</span>
+        <input
+          type="file"
+          onChange={handleFileUpload}
+          ref={fileInputRef}
+          className="hidden"
+        />
+      </div>
 
-          <div ref={qrRef} className="p-4 bg-white rounded shadow">
-            <QRCodeCanvas value={imageUrl} size={256} />
+      <div className="text-gray-500 text-sm">or enter a link/text manually</div>
+
+      {/* Manual Link Input */}
+      <div className="flex gap-2 flex-wrap justify-center">
+        <input
+          type="text"
+          value={inputUrl}
+          onChange={handleLinkInput}
+          placeholder="https://example.com or any text"
+          className="border px-4 py-2 rounded w-[300px]"
+        />
+        <button
+          onClick={generateQrFromLink}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Generate QR
+        </button>
+      </div>
+
+      {loading && <p className="text-blue-600">Uploading...</p>}
+      {file && !loading && <p className="text-gray-600">Uploaded: {file.name}</p>}
+
+      {/* QR Preview */}
+      {qrValue && (
+        <>
+          <div ref={qrRef} className="bg-white p-4 rounded shadow">
+            <QRCodeCanvas value={qrValue} size={256} />
           </div>
-
           <button
-            onClick={handleDownload}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={handleDownloadQR}
+            className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
             Download QR Code
           </button>

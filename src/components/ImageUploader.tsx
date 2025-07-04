@@ -1,16 +1,19 @@
-import React, { useState, useRef } from 'react';
-import ImageCropper from './ImageCropper';
-import BaseImageUpload from './BaseImageUpload';
-import OverlayImageUpload from './OverlayImageUpload';
-import GenerateButton from './GenerateButton';
-import MergedImagePreview from './MergedImagePreview';
-import type { PixelCrop } from 'react-image-crop';
+import React, { useState, useRef } from "react";
+import ImageCropper from "./ImageCropper";
+import BaseImageUpload from "./BaseImageUpload";
+import OverlayImageUpload from "./OverlayImageUpload";
+import GenerateButton from "./GenerateButton";
+import MergedImagePreview from "./MergedImagePreview";
+import type { PixelCrop } from "react-image-crop";
 
 const ImageUploader: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [overlayUrl, setOverlayUrl] = useState<string | null>(null);
   const [croppedArea, setCroppedArea] = useState<PixelCrop | null>(null);
-  const [baseImageNaturalSize, setBaseImageNaturalSize] = useState<{ width: number; height: number } | null>(null);
+  const [baseImageNaturalSize, setBaseImageNaturalSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
   const [mergedImageUrl, setMergedImageUrl] = useState<string | null>(null);
 
   const baseImageRef = useRef<HTMLImageElement | null>(null);
@@ -25,6 +28,9 @@ const ImageUploader: React.FC = () => {
       setBaseImageNaturalSize(null);
     };
     img.src = url;
+  };
+  const handleRemoveImage = () => {
+    setImageUrl(null);
   };
 
   const handleOverlayUpload = (url: string) => {
@@ -48,18 +54,23 @@ const ImageUploader: React.FC = () => {
   };
 
   const generateMergedImage = () => {
-    if (!baseImageRef.current || !overlayImageRef.current || !croppedArea || !baseImageNaturalSize) {
-      alert('Please select base image, overlay image, and crop area first.');
+    if (
+      !baseImageRef.current ||
+      !overlayImageRef.current ||
+      !croppedArea ||
+      !baseImageNaturalSize
+    ) {
+      alert("Please select base image, overlay image, and crop area first.");
       return;
     }
 
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = baseImageNaturalSize.width;
     canvas.height = baseImageNaturalSize.height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     if (!ctx) {
-      alert('Failed to get canvas context');
+      alert("Failed to get canvas context");
       return;
     }
 
@@ -75,16 +86,16 @@ const ImageUploader: React.FC = () => {
       croppedArea.height
     );
 
-    const mergedDataUrl = canvas.toDataURL('image/png');
+    const mergedDataUrl = canvas.toDataURL("image/png");
     setMergedImageUrl(mergedDataUrl);
   };
 
   const downloadMergedImage = () => {
     if (!mergedImageUrl) return;
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = mergedImageUrl;
-    link.download = 'merged-image.png';
+    link.download = "merged-image.png";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -93,7 +104,12 @@ const ImageUploader: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center mt-10 space-y-6 px-4 max-w-[1300px] mx-auto">
       {/* Base Image Upload */}
-      <BaseImageUpload onUpload={handleBaseImageUpload} />
+      <h1 className="text-3xl font-bold text-center">Image Merger</h1>
+      <BaseImageUpload
+        onUpload={handleBaseImageUpload}
+        imageUrl={imageUrl}
+        onRemove={handleRemoveImage}
+      />
 
       {/* Cropper */}
       {imageUrl && (
@@ -107,7 +123,10 @@ const ImageUploader: React.FC = () => {
 
       {/* Overlay Image Upload */}
       {croppedArea && (
-        <OverlayImageUpload onUpload={handleOverlayUpload} />
+        <OverlayImageUpload
+          onUpload={handleOverlayUpload}
+          imageUrl={overlayUrl}
+        />
       )}
 
       {/* Hidden Overlay Image */}
@@ -116,7 +135,7 @@ const ImageUploader: React.FC = () => {
           src={overlayUrl}
           alt="Overlay"
           ref={overlayImageRef}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           onLoad={(e) => handleOverlayImageLoaded(e.currentTarget)}
         />
       )}

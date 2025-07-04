@@ -4,9 +4,9 @@ const ToolLayout = () => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gray-100 relative p-6">
-      {/* Navbar in Top-Right */}
-      <div className="absolute top-4 right-6 space-x-4">
+    <div className="min-h-screen bg-gray-100 p-6">
+      {/* Navbar fixed Top-Right */}
+      <div className="fixed top-4 right-6 space-x-4 z-50">
         {location.pathname !== "/merge-image" && (
           <NavLink
             to="/merge-image"

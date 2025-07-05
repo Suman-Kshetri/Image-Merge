@@ -136,7 +136,7 @@ const QrGenerator: React.FC = () => {
         />
         <button
           onClick={generateQrFromLink}
-          className="px-4 py-2 rounded transition-colors duration-300 bg-[var(--button-primary)] text-white hover:bg-[var(--button-primary-hover)]"
+          className="px-4 py-2 rounded transition-colors cursor-pointer duration-300 bg-[var(--button-primary)] text-white ]"
         >
           Generate QR
         </button>
@@ -156,7 +156,7 @@ const QrGenerator: React.FC = () => {
 
           <button
             onClick={handleDownloadQR}
-            className="px-6 py-2 rounded transition-colors cursor-pointer duration-300 bg-[var(--button-success)] text-white hover:bg-[var(--button-success-hover)]"
+            className="mt-4 px-6 py-2 bg-[var(--button-primary)] text-white font-semibold cursor-pointer rounded-lg shadow-md hover:brightness-110 transition duration-300"
           >
             Download QR Code
           </button>

@@ -107,7 +107,9 @@ const QrGenerator: React.FC = () => {
           />
         </svg>
         <span className="font-semibold">Click to upload a file</span>
-        <span className="text-xs mt-1 text-[var(--text-muted)]">PNG, JPG, PDF, etc.</span>
+        <span className="text-xs mt-1 text-[var(--text-muted)]">
+          PNG, JPG, PDF, etc.
+        </span>
         <input
           type="file"
           onChange={handleFileUpload}
@@ -116,7 +118,9 @@ const QrGenerator: React.FC = () => {
         />
       </div>
 
-      <div className="text-sm text-[var(--text-muted)]">or enter a link/text manually</div>
+      <div className="text-sm text-[var(--text-muted)]">
+        or enter a link/text manually
+      </div>
 
       {/* Manual Link Input */}
       <div className="flex gap-2 flex-wrap justify-center">
@@ -146,15 +150,13 @@ const QrGenerator: React.FC = () => {
       {/* QR Preview */}
       {qrValue && (
         <>
-          <div
-            ref={qrRef}
-            className="p-4 rounded shadow transition-colors duration-300 bg-[var(--card-bg)]"
-          >
+          <div ref={qrRef} className="p-4 bg-white rounded shadow duration-300">
             <QRCodeCanvas value={qrValue} size={256} />
           </div>
+
           <button
             onClick={handleDownloadQR}
-            className="px-6 py-2 rounded transition-colors duration-300 bg-[var(--button-success)] text-white hover:bg-[var(--button-success-hover)]"
+            className="px-6 py-2 rounded transition-colors cursor-pointer duration-300 bg-[var(--button-success)] text-white hover:bg-[var(--button-success-hover)]"
           >
             Download QR Code
           </button>

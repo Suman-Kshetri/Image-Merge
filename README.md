@@ -1,54 +1,101 @@
-# React + TypeScript + Vite
+# 🖼️ Image Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight **React + TypeScript + Tailwind CSS** app that helps you quickly:
 
-Currently, two official plugins are available:
+- 🖼️ **Merge images** — upload, crop, and overlay images using canvas  
+- 📱 **Generate QR codes** from text, URLs, or uploaded files  
+- 🌙 **Toggle between Light/Dark mode** — preferences are saved and applied on reload
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Image Merger**  
+  Crop two images and merge them into a single downloadable result.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **QR Code Generator**  
+  Instantly create a downloadable QR code from user input.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Light/Dark Theme Toggle**  
+  - Theme state is initialized from `localStorage` or system preferences.  
+  - A toggle button allows switching themes.  
+  - The `<html>` class (`.light` / `.dark`) is updated immediately to avoid flashes.  
+  - Theme choices are stored to persist across visits.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Responsive** and **accessible** UI built with Tailwind CSS
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---
+
+## 🧠 Tech Stack
+
+- **React 18** + **TypeScript**
+- **React Router v6** for navigation between tools
+- **Tailwind CSS** (`darkMode: 'class'`) + CSS variables for theming
+- `react-image-crop` for cropping in the image merger
+- `qrcode.react` for generating QR codes
+- Theme persistence via `localStorage`
+
+---
+
+## 🛠 Setup & Installation
+
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/Suman‑Kshetri/Image‑Tools.git
+   cd Image‑Tools
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in the browser.
+
+---
+
+## ⚙ Theme Integration Details
+
+- **`tailwind.config.js`** is set with:
+  ```js
+  darkMode: 'class',
+  content: ['./src/**/*.{js,ts,jsx,tsx}']
+  ```
+
+- **Inline script in `index.html`:**  
+  Reads `localStorage` or system setting before React loads and adds `.light`/`.dark` to `<html>`, preventing a flash of wrong theme.
+
+- **`useTheme` hook:**  
+  - Initializes theme based on stored preference or OS.  
+  - Syncs `<html>` class and `localStorage` whenever the theme toggles.  
+  - Returns `theme` and `toggleTheme()` to manage UI.
+
+---
+
+## 🧭 Usage
+
+- **Home Page:**  
+  - Toggle between light and dark themes using the fixed button  
+  - Navigate using the cards to:  
+    - **Image Merger** (`/merge-image`)  
+    - **QR Code Generator** (`/qr-generator`)
+
+- **Image Merger Page:**  
+  Upload, crop, and merge images side by side.
+
+- **QR Generator Page:**  
+  Enter text or URL → click "Generate" → download your QR code.
+
+---
+
+
+> Built by **Suman Kshetri**

@@ -1,6 +1,6 @@
 module.exports = {
-  darkMode: 'class', // or 'media' but 'class' is best for toggle
-  content: ['./src/**/*.{js,jsx,ts,tsx}'], // adjust paths accordingly
+  darkMode: 'class', // required for toggle-based dark mode
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {},
   },

@@ -1,3 +1,4 @@
+// src/pages/Home.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,9 +11,7 @@ const Home: React.FC<HomeProps> = ({ theme, toggleTheme }) => {
   const navigate = useNavigate();
 
   return (
-    <div
-      className="h-screen flex flex-col items-center justify-start mt-15 px-6 max-w-4xl mx-auto bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 gap-8"
-    >
+    <div className="h-screen flex flex-col items-center justify-start mt-15 px-6 max-w-4xl mx-auto bg-[var(--bg-main)] text-[var(--text-main)] transition-colors duration-300 gap-8">
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
@@ -20,7 +19,6 @@ const Home: React.FC<HomeProps> = ({ theme, toggleTheme }) => {
         className="fixed top-4 right-4 p-2 rounded-lg bg-[var(--nav-bg)] text-white cursor-pointer hover:brightness-110 transition flex items-center justify-center z-50"
       >
         {theme === "light" ? (
-          /* Moon Icon */
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-6 h-6"
@@ -36,7 +34,6 @@ const Home: React.FC<HomeProps> = ({ theme, toggleTheme }) => {
             />
           </svg>
         ) : (
-          /* Sun Icon */
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-6 h-6"
@@ -61,7 +58,6 @@ const Home: React.FC<HomeProps> = ({ theme, toggleTheme }) => {
 
       {/* Two Cards */}
       <div className="flex gap-10 flex-wrap justify-center w-full px-4">
-        {/* Image Merger Card */}
         <div
           onClick={() => navigate("/merge-image")}
           className="cursor-pointer bg-[var(--card-bg)] rounded-xl shadow-lg p-8 w-72 flex flex-col items-center text-center hover:brightness-105 transition duration-300 ease-in-out select-none"
@@ -78,7 +74,6 @@ const Home: React.FC<HomeProps> = ({ theme, toggleTheme }) => {
           </p>
         </div>
 
-        {/* QR Generator Card */}
         <div
           onClick={() => navigate("/qr-generator")}
           className="cursor-pointer bg-[var(--card-bg)] rounded-xl shadow-lg p-8 w-72 flex flex-col items-center text-center hover:brightness-105 transition duration-300 ease-in-out select-none"

@@ -7,36 +7,30 @@ import ImageUploader from "./components/ImageUploader";
 import QrGenerator from "./components/QrGenerator";
 
 const App: React.FC = () => {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Initialize theme synchronously to avoid flicker
+  const getInitialTheme = (): "light" | "dark" => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
 
-  useEffect(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark") {
-      setTheme(stored);
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setTheme(prefersDark ? "dark" : "light");
-    }
-  }, []);
+  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
 
+  // When theme changes, update <html> class and localStorage
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+  const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <ToolLayout theme={theme} />, // pass theme to layout
+      element: <ToolLayout theme={theme} />,
       children: [
-        {
-          index: true,
-          element: <Home theme={theme} toggleTheme={toggleTheme} />, // toggle button only on Home
-        },
+        { index: true, element: <Home theme={theme} toggleTheme={toggleTheme} /> },
         { path: "merge-image", element: <ImageUploader /> },
         { path: "qr-generator", element: <QrGenerator /> },
       ],
